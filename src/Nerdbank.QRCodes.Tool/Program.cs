@@ -4,7 +4,7 @@
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
-using Nerdbank.Barcodes.Tool;
+using Nerdbank.QRCodes.Tool;
 
 RootCommand rootCommand = new("Offers QR code creation or reading functions.")
 {

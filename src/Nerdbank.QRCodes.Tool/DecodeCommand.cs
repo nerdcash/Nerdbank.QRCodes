@@ -9,7 +9,7 @@ using ZXing;
 using ZXing.Windows.Compatibility;
 #endif
 
-namespace Nerdbank.Barcodes.Tool;
+namespace Nerdbank.QRCodes.Tool;
 
 /// <summary>
 /// Reads the text from an image of a barcode.

@@ -8,7 +8,7 @@ using ZXing;
 using ZXing.Windows.Compatibility;
 #endif
 
-namespace Nerdbank.Barcodes.Tool;
+namespace Nerdbank.QRCodes.Tool;
 
 /// <summary>
 /// Creates bar codes.
@@ -17,7 +17,6 @@ public class EncodeCommand
 {
 	private const int DefaultWidth = 400;
 	private const int DefaultHeight = 400;
-	private const BarcodeFormat DefaultBarcodeFormat = BarcodeFormat.QR_CODE;
 
 	private static readonly Dictionary<string, Func<BarcodeWriterGeneric>> BarcodeFactories = new(StringComparer.OrdinalIgnoreCase)
 	{
@@ -43,20 +42,6 @@ public class EncodeCommand
 	public required FileInfo OutputFile { get; set; }
 
 	/// <summary>
-	/// Gets or sets the barcode format. The default is <see cref="BarcodeFormat.QR_CODE"/>.
-	/// </summary>
-	public BarcodeFormat BarcodeFormat { get; set; } = BarcodeFormat.QR_CODE;
-
-	/// <summary>
-	/// Gets or sets a value indicating whether the <see cref="Text" /> should <em>not</em> appear next to the generated barcode.
-	/// </summary>
-	/// <remarks>
-	/// Only some barcode formats include this text by default.
-	/// Setting this property to <see langword="true"/> will omit the text.
-	/// </remarks>
-	public bool OmitText { get; set; }
-
-	/// <summary>
 	/// Gets or sets the width of the output image in pixels.
 	/// </summary>
 	public int Width { get; set; } = DefaultWidth;
@@ -76,8 +61,6 @@ public class EncodeCommand
 	{
 		Argument<string> textArg = new("text", "The text to be encoded.");
 		Argument<FileInfo> outputFileArg = new("outputFile", $"The path to the file to be written with the encoded image. {SupportedFormatsHelpString}");
-		Option<BarcodeFormat> barcodeFormatOption = new("--format", () => DefaultBarcodeFormat, "The kind of code to create.");
-		Option<bool> omitTextOption = new("--omit-text", "Omits the text that is written under some bar code formats.");
 		Option<int> widthOption = new("--width", () => DefaultWidth, "The width in pixels of the output.");
 		Option<int> heightOption = new("--height", () => DefaultHeight, "The height in pixels of the output.");
 
@@ -94,8 +77,6 @@ public class EncodeCommand
 		{
 			textArg,
 			outputFileArg,
-			barcodeFormatOption,
-			omitTextOption,
 			widthOption,
 			heightOption,
 		};
@@ -104,8 +85,6 @@ public class EncodeCommand
 			Console = ctxt.Console,
 			Text = ctxt.ParseResult.GetValueForArgument(textArg),
 			OutputFile = ctxt.ParseResult.GetValueForArgument(outputFileArg),
-			BarcodeFormat = ctxt.ParseResult.GetValueForOption(barcodeFormatOption),
-			OmitText = ctxt.ParseResult.GetValueForOption(omitTextOption),
 			Width = ctxt.ParseResult.GetValueForOption(widthOption),
 			Height = ctxt.ParseResult.GetValueForOption(heightOption),
 		}.Execute());
@@ -118,10 +97,9 @@ public class EncodeCommand
 	public void Execute()
 	{
 		BarcodeWriterGeneric writer = this.CreateBarcodeWriter();
-		writer.Format = this.BarcodeFormat;
+		writer.Format = BarcodeFormat.QR_CODE;
 		writer.Options.Height = this.Height;
 		writer.Options.Width = this.Width;
-		writer.Options.PureBarcode = this.OmitText;
 		this.Write(writer);
 		this.Console?.WriteLine($"Encoding written to: \"{this.OutputFile.FullName}\"");
 	}

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Nerdbank.Barcodes.Tool\Nerdbank.Barcodes.Tool.csproj" />
+    <ProjectReference Include="..\..\src\Nerdbank.QRCodes.Tool\Nerdbank.QRCodes.Tool.csproj" />
   </ItemGroup>
 
   <ItemGroup>
