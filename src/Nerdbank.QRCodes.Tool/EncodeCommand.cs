@@ -62,7 +62,7 @@ public class EncodeCommand
 	/// <summary>
 	/// Gets or sets the file to write the barcode to.
 	/// </summary>
-	public required FileInfo? OutputFile { get; set; }
+	public FileInfo? OutputFile { get; set; }
 
 	/// <summary>
 	/// Gets or sets the light color to use.
@@ -226,7 +226,7 @@ public class EncodeCommand
 		QRCodeGenerator generator = new();
 		QRCodeData data = generator.CreateQrCode(this.Text, this.ECCLevel);
 
-		if (Math.Min(System.Console.WindowWidth, System.Console.WindowHeight) < (data.ModuleMatrix.Count * 2) + 2)
+		if (Math.Min(System.Console.WindowWidth / 2, System.Console.WindowHeight) < data.ModuleMatrix.Count + 2)
 		{
 			this.Console?.WriteLine("Window size too small to print an text copy of the QR code.");
 		}
