@@ -4,6 +4,7 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -86,14 +87,18 @@ public class EncodeCommand
 	{
 		Argument<string> textArg = new("text", "The text to be encoded.");
 		Option<FileInfo> outputFileOption = new(new[] { "--outputFile", "-o" }, $"The path to the file to be written with the encoded image. {SupportedFormatsHelpString}");
-		Option<QRCodeGenerator.ECCLevel> eccLevelOption = new("--ecc", () => DefaultECCLevel, "The ECC correction level.");
+
+		Option<QRCodeGenerator.ECCLevel> eccLevelOption = new("--ecc", () => DefaultECCLevel, "The ECC correction level (0-3 or any of L, M, Q, H).");
+		eccLevelOption.AddCompletions(Enum.GetValuesAsUnderlyingType(typeof(QRCodeGenerator.ECCLevel)).Cast<int>().Select(v => v.ToString(CultureInfo.InvariantCulture)).ToArray());
+
 		Option<Color> lightColorOption = new("--light-color", ParseColor, description: "The light color to use. N/A for TXT format.");
+		lightColorOption.SetDefaultValue(DefaultLightColor);
+
 		Option<Color> darkColorOption = new("--dark-color", ParseColor, description: "The dark color to use. N/A for TXT format.");
+		darkColorOption.SetDefaultValue(DefaultDarkColor);
+
 		Option<bool> noPaddingOption = new("--no-padding", () => DefaultNoPadding, "Omits the 'quiet zone' around the code in the saved image. Ignored by some formats.");
 		Option<int> moduleSizeOption = new("--size", () => DefaultModuleSize, "The length in pixels of an edge of a single module (one of the small boxes that make up the QR code). N/A for TXT format.");
-
-		lightColorOption.SetDefaultValue(DefaultLightColor);
-		darkColorOption.SetDefaultValue(DefaultDarkColor);
 
 		outputFileOption.AddValidator(result =>
 		{
