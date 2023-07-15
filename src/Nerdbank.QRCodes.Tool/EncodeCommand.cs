@@ -3,10 +3,8 @@
 
 using System.CommandLine;
 using System.IO;
-using ZXing;
-#if WINDOWS
-using ZXing.Windows.Compatibility;
-#endif
+using System.Text;
+using QRCoder;
 
 namespace Nerdbank.QRCodes.Tool;
 
@@ -15,14 +13,19 @@ namespace Nerdbank.QRCodes.Tool;
 /// </summary>
 public class EncodeCommand
 {
+	private const int ModuleSize = 20;
 	private const int DefaultWidth = 400;
 	private const int DefaultHeight = 400;
+	private const QRCodeGenerator.ECCLevel DefaultECCLevel = QRCodeGenerator.ECCLevel.Q;
 
-	private static readonly Dictionary<string, Func<BarcodeWriterGeneric>> BarcodeFactories = new(StringComparer.OrdinalIgnoreCase)
+	private static readonly Dictionary<string, Func<QRCodeData, byte[]>> GraphicFormatWriters = new(StringComparer.OrdinalIgnoreCase)
 	{
-		[".svg"] = () => new BarcodeWriterSvg(),
+		[".txt"] = data => Encoding.UTF8.GetBytes(new AsciiQRCode(data).GetGraphic(1)),
+		[".bmp"] = data => new BitmapByteQRCode(data).GetGraphic(ModuleSize),
+		[".png"] = data => new PngByteQRCode(data).GetGraphic(ModuleSize),
 #if WINDOWS
-		[".bmp"] = () => new BarcodeWriterWriteableBitmap(),
+		[".svg"] = data => Encoding.ASCII.GetBytes(new SvgQRCode(data).GetGraphic(ModuleSize)),
+		[".pdf"] = data => new PdfByteQRCode(data).GetGraphic(ModuleSize),
 #endif
 	};
 
@@ -39,7 +42,15 @@ public class EncodeCommand
 	/// <summary>
 	/// Gets or sets the file to write the barcode to.
 	/// </summary>
-	public required FileInfo OutputFile { get; set; }
+	public required FileInfo? OutputFile { get; set; }
+
+	/// <summary>
+	/// Gets or sets the ECC level.
+	/// </summary>
+	/// <remarks>
+	/// Higher correction level allows more of the QR code to be corrupted, but may require a larger graphic.
+	/// </remarks>
+	public QRCodeGenerator.ECCLevel ECCLevel { get; set; } = DefaultECCLevel;
 
 	/// <summary>
 	/// Gets or sets the width of the output image in pixels.
@@ -51,7 +62,7 @@ public class EncodeCommand
 	/// </summary>
 	public int Height { get; set; } = DefaultHeight;
 
-	private static string SupportedFormatsHelpString => $"Supported formats: {string.Join(", ", BarcodeFactories.Keys)}";
+	private static string SupportedFormatsHelpString => $"Supported formats: {string.Join(", ", GraphicFormatWriters.Keys)}";
 
 	/// <summary>
 	/// Creates a <see cref="Command"/> instance for the <c>encode</c> command.
@@ -60,14 +71,15 @@ public class EncodeCommand
 	public static Command CreateCommand()
 	{
 		Argument<string> textArg = new("text", "The text to be encoded.");
-		Argument<FileInfo> outputFileArg = new("outputFile", $"The path to the file to be written with the encoded image. {SupportedFormatsHelpString}");
+		Option<FileInfo> outputFileOption = new(new[] { "--outputFile", "-o" }, $"The path to the file to be written with the encoded image. {SupportedFormatsHelpString}");
+		Option<QRCodeGenerator.ECCLevel> eccLevelOption = new("--ecc", () => DefaultECCLevel, "The ECC correction level.");
 		Option<int> widthOption = new("--width", () => DefaultWidth, "The width in pixels of the output.");
 		Option<int> heightOption = new("--height", () => DefaultHeight, "The height in pixels of the output.");
 
-		outputFileArg.AddValidator(result =>
+		outputFileOption.AddValidator(result =>
 		{
-			string extension = result.GetValueForArgument(outputFileArg).Extension;
-			if (!BarcodeFactories.ContainsKey(extension))
+			string? extension = result.GetValueForOption(outputFileOption)?.Extension;
+			if (extension is not null && !GraphicFormatWriters.ContainsKey(extension))
 			{
 				result.ErrorMessage = $"Unsupported output format: {extension}. {SupportedFormatsHelpString}";
 			}
@@ -76,7 +88,8 @@ public class EncodeCommand
 		Command command = new("encode", "Creates a QR code.")
 		{
 			textArg,
-			outputFileArg,
+			outputFileOption,
+			eccLevelOption,
 			widthOption,
 			heightOption,
 		};
@@ -84,7 +97,8 @@ public class EncodeCommand
 		{
 			Console = ctxt.Console,
 			Text = ctxt.ParseResult.GetValueForArgument(textArg),
-			OutputFile = ctxt.ParseResult.GetValueForArgument(outputFileArg),
+			OutputFile = ctxt.ParseResult.GetValueForOption(outputFileOption),
+			ECCLevel = ctxt.ParseResult.GetValueForOption(eccLevelOption),
 			Width = ctxt.ParseResult.GetValueForOption(widthOption),
 			Height = ctxt.ParseResult.GetValueForOption(heightOption),
 		}.Execute());
@@ -96,39 +110,28 @@ public class EncodeCommand
 	/// </summary>
 	public void Execute()
 	{
-		BarcodeWriterGeneric writer = this.CreateBarcodeWriter();
-		writer.Format = BarcodeFormat.QR_CODE;
-		writer.Options.Height = this.Height;
-		writer.Options.Width = this.Width;
-		this.Write(writer);
-		this.Console?.WriteLine($"Encoding written to: \"{this.OutputFile.FullName}\"");
+		QRCodeGenerator generator = new();
+		QRCodeData data = generator.CreateQrCode(this.Text, this.ECCLevel);
+
+		AsciiQRCode asciiArt = new(data);
+		this.Console?.WriteLine(asciiArt.GetGraphic(1, endOfLine: Environment.NewLine));
+
+		if (this.OutputFile is not null)
+		{
+			this.Write(data, this.OutputFile);
+			this.Console?.WriteLine($"Saved to: \"{this.OutputFile.FullName}\"");
+		}
 	}
 
-	private BarcodeWriterGeneric CreateBarcodeWriter()
+	private void Write(QRCodeData data, FileInfo outputFile)
 	{
-		string extension = Path.GetExtension(this.OutputFile.FullName);
-		if (BarcodeFactories.TryGetValue(extension, out Func<BarcodeWriterGeneric>? factory))
+		string extension = Path.GetExtension(outputFile.FullName);
+		if (!GraphicFormatWriters.TryGetValue(extension, out Func<QRCodeData, byte[]>? writer))
 		{
-			return factory();
+			throw new NotSupportedException($"Unsupported output file format: {extension}. {SupportedFormatsHelpString}");
 		}
 
-		throw new NotSupportedException($"Unsupported output file format: {extension}");
-	}
-
-	private void Write(BarcodeWriterGeneric writer)
-	{
-		switch (writer)
-		{
-			case IBarcodeWriterSvg svg:
-				File.WriteAllText(this.OutputFile.FullName, svg.Write(this.Text).ToString());
-				break;
-#if WINDOWS
-			case BarcodeWriterWriteableBitmap bitmapWriter:
-				bitmapWriter.WriteAsBitmap(this.Text).Save(this.OutputFile.FullName);
-				break;
-#endif
-			default:
-				throw new NotSupportedException();
-		}
+		using FileStream fileStream = outputFile.OpenWrite();
+		fileStream.Write(writer(data));
 	}
 }
