@@ -32,11 +32,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{36CCE840-6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D1A0EC7F-4B22-4D6E-A7AE-216278FBBD8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nerdbank.Barcodes", "src\Nerdbank.Barcodes\Nerdbank.Barcodes.csproj", "{9C175B2C-19A9-4CDD-8DE3-C64B0F89E545}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nerdbank.Barcodes.Tool", "src\Nerdbank.Barcodes.Tool\Nerdbank.Barcodes.Tool.csproj", "{9C175B2C-19A9-4CDD-8DE3-C64B0F89E545}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A5E88D6F-5FF6-41AF-B870-4063C8264ECB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nerdbank.Barcodes.Tests", "test\Nerdbank.Barcodes.Tests\Nerdbank.Barcodes.Tests.csproj", "{A9895B62-5DBC-4569-8AD8-00A33ABB02A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nerdbank.Barcodes.Tool.Tests", "test\Nerdbank.Barcodes.Tool.Tests\Nerdbank.Barcodes.Tool.Tests.csproj", "{A9895B62-5DBC-4569-8AD8-00A33ABB02A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

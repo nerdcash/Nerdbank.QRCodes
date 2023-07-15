@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net7.0;net7.0-windows</TargetFrameworks>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>qrcode</ToolCommandName>
+    <UseWPF Condition="'$(TargetFramework)'=='net7.0-windows'">true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="ZXing.Net" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net7.0-windows'">
+    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" />
+  </ItemGroup>
+</Project>
