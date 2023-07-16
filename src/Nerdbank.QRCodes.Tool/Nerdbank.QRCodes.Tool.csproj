@@ -2,8 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net7.0;net7.0-windows</TargetFrameworks>
-    <PackAsTool>true</PackAsTool>
-    <ToolCommandName>qrcode</ToolCommandName>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="QRCoder" />
