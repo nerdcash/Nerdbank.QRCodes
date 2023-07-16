@@ -41,7 +41,7 @@ public class EncodeCommand
 		[".png"] = (@this, data) => @this.DrawArtsy(data, ImageFormat.Png),
 		[".tif"] = (@this, data) => @this.DrawArtsy(data, ImageFormat.Tiff),
 		[".gif"] = (@this, data) => @this.DrawArtsy(data, ImageFormat.Gif),
-		[".svg"] = (@this, data) => Encoding.ASCII.GetBytes(new SvgQRCode(data).GetGraphic(@this.ModuleSize, @this.DarkColor, @this.LightColor, drawQuietZones: !@this.NoPadding)),
+		[".svg"] = (@this, data) => Encoding.ASCII.GetBytes(new SvgQRCode(data).GetGraphic(@this.ModuleSize, @this.DarkColor, @this.LightColor, drawQuietZones: !@this.NoPadding, logo: @this.GetSvgLogo())),
 		[".pdf"] = (@this, data) => new PdfByteQRCode(data).GetGraphic(@this.ModuleSize, ToHtml(@this.DarkColor), ToHtml(@this.LightColor)),
 #else
 		[".png"] = (@this, data) => new PngByteQRCode(data).GetGraphic(@this.ModuleSize, ToRgba(@this.DarkColor), ToRgba(@this.LightColor), drawQuietZones: !@this.NoPadding),
@@ -211,7 +211,7 @@ public class EncodeCommand
 			IconPath = ctxt.ParseResult.GetValueForOption(iconFileOption),
 			IconSizePercent = ctxt.ParseResult.GetValueForOption(iconSizePercentOption),
 			IconBorderWidth = ctxt.ParseResult.GetValueForOption(iconBorderWidthOption),
-			IconBackgroundColor = ctxt.ParseResult.GetValueForOption(iconBackgroundColorOption),
+			IconBackgroundColor = ctxt.ParseResult.HasOption(iconBackgroundColorOption) ? ctxt.ParseResult.GetValueForOption(iconBackgroundColorOption) : null,
 			NoPadding = ctxt.ParseResult.GetValueForOption(noPaddingOption),
 			ModuleSize = ctxt.ParseResult.GetValueForOption(moduleSizeOption),
 		}.Execute());
@@ -278,6 +278,29 @@ public class EncodeCommand
 	private static string ToHtml(Color color) => $"{color.R:x2}{color.G:x2}{color.B:x2}";
 
 #if WINDOWS
+
+	private SvgQRCode.SvgLogo? GetSvgLogo()
+	{
+		using Bitmap? logo = this.GetLogoBitmap();
+		return logo is null ? null : new(logo, this.IconSizePercent, this.IconBackgroundColor is not null);
+	}
+
+	private Bitmap? GetLogoBitmap()
+	{
+		if (this.IconPath is not null)
+		{
+			Image iconImage = Image.FromFile(this.IconPath.FullName);
+			if (iconImage is not Bitmap)
+			{
+				// TODO: Convert.
+			}
+
+			return (Bitmap)iconImage;
+		}
+
+		return null;
+	}
+
 	private byte[] DrawArtsy(QRCodeData data, ImageFormat imageFormat)
 	{
 		Bitmap? icon = null;
@@ -285,13 +308,7 @@ public class EncodeCommand
 		{
 			if (this.IconPath is not null)
 			{
-				Image iconImage = Image.FromFile(this.IconPath.FullName);
-				if (iconImage is not Bitmap)
-				{
-					// TODO: Convert.
-				}
-
-				icon = (Bitmap)iconImage;
+				icon = this.GetLogoBitmap();
 
 				if (this.IconSizePercent > this.EccRecoveryPercentage)
 				{
