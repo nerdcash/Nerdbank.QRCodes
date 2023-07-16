@@ -360,5 +360,8 @@ public class EncodeCommand
 
 		using FileStream fileStream = outputFile.OpenWrite();
 		fileStream.Write(writer(this, data));
+
+		// Truncate if rewriting.
+		fileStream.SetLength(fileStream.Position);
 	}
 }
