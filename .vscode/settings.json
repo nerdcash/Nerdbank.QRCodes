@@ -5,5 +5,5 @@
   "omnisharp.enableEditorConfigSupport": true,
   "omnisharp.enableRoslynAnalyzers": true,
   "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
-  "dotnet.defaultSolution": "Nerdbank.Barcodes.sln"
+  "dotnet.defaultSolution": "Nerdbank.QRCodes.sln"
 }

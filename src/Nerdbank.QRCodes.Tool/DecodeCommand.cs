@@ -3,11 +3,6 @@
 
 using System.CommandLine;
 using System.Drawing;
-using System.IO;
-using ZXing;
-#if WINDOWS
-using ZXing.Windows.Compatibility;
-#endif
 
 namespace Nerdbank.QRCodes.Tool;
 
@@ -38,7 +33,7 @@ public class DecodeCommand
 		{
 			inputFile,
 		};
-		command.SetHandler(ctxt => new DecodeCommand
+		command.SetHandler(ctxt => ctxt.ExitCode = new DecodeCommand
 		{
 			InputPath = ctxt.ParseResult.GetValueForArgument(inputFile),
 			Console = ctxt.Console,
@@ -49,17 +44,24 @@ public class DecodeCommand
 	/// <summary>
 	/// Executes the command.
 	/// </summary>
-	public void Execute()
+	/// <returns>The exit code.</returns>
+	public int Execute()
 	{
 #if WINDOWS
 		using Bitmap bitmap = (Bitmap)Image.FromFile(this.InputPath.FullName);
-		BarcodeReader reader = new BarcodeReader();
-		Result result = reader.Decode(bitmap);
-		this.Console?.WriteLine($"Text:   {result.Text}");
-		this.Console?.WriteLine($"Format: {result.BarcodeFormat}");
-
+		if (QRDecoder.TryDecode(bitmap, out string? data))
+		{
+			this.Console?.WriteLine(data);
+			return 0;
+		}
+		else
+		{
+			this.Console?.WriteLine("Failed to discover a QR code.");
+			return 1;
+		}
 #else
 		this.Console?.WriteLine("This command is only supported on Windows.");
+		return 2;
 #endif
 	}
 }
