@@ -1,3 +1,4 @@
+Nerdbank.QRCodes.QRDecoder
 Nerdbank.QRCodes.QREncoder
 Nerdbank.QRCodes.QREncoder.BackgroundColor.get -> System.Drawing.Color
 Nerdbank.QRCodes.QREncoder.BackgroundColor.set -> void
@@ -22,4 +23,5 @@ Nerdbank.QRCodes.QREncoder.ModuleSize.get -> int
 Nerdbank.QRCodes.QREncoder.ModuleSize.set -> void
 Nerdbank.QRCodes.QREncoder.NoPadding.get -> bool
 Nerdbank.QRCodes.QREncoder.NoPadding.set -> void
+static Nerdbank.QRCodes.QRDecoder.TryDecode(System.Drawing.Bitmap! qrcodePhoto, out string? data) -> bool
 static Nerdbank.QRCodes.QREncoder.SupportedExtensions.get -> System.Collections.Generic.IReadOnlySet<string!>!

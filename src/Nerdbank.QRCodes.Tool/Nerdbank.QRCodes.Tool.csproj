@@ -6,10 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.CommandLine" />
-    <PackageReference Include="ZXing.Net" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net7.0-windows'">
-    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nerdbank.QRCodes\Nerdbank.QRCodes.csproj" />
