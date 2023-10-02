@@ -3,9 +3,12 @@ name: CI
 on:
   push:
     branches:
-      - main
-      - validate/*
+    - main
+    - validate/*
+    tags:
+    - 'v*.*'
   pull_request:
+  workflow_dispatch:
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
@@ -113,3 +116,16 @@ jobs:
       timeout-minutes: 3
       continue-on-error: true
       if: always()
+
+  ship:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+    - name: 🔻 Download deployables artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: deployables-Linux
+        path: ${{ runner.temp }}/deployables
+    - name: 🚀 Push NuGet packages
+      run: dotnet nuget push ${{ runner.temp }}/deployables/*.nupkg --source https://api.nuget.org/v3/index.json -k '${{ secrets.NUGET_API_KEY }}'
