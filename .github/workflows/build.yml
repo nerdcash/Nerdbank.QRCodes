@@ -122,10 +122,30 @@ jobs:
     needs: build
     runs-on: ubuntu-20.04
     steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
+
     - name: 🔻 Download deployables artifacts
       uses: actions/download-artifact@v3
       with:
         name: deployables-Linux
         path: ${{ runner.temp }}/deployables
+
+    - name: 🔏 Code sign
+      run: >
+        dotnet tool install --tool-path obj SignClient
+
+        obj/SignClient sign
+        --baseDirectory '${{ runner.temp }}/deployables'
+        --input '**/*'
+        --config '${{ github.workspace }}/azure-pipelines/SignClient.json'
+        --filelist '${{ github.workspace }}/azure-pipelines/signfiles.txt'
+        --user '${{ secrets.CODESIGN_USERNAME }}'
+        --secret '${{ secrets.CODESIGN_SECRET }}'
+        --name 'Nerdbank.Streams'
+        --descriptionUrl 'https://github.com/nerdcash/Nerdbank.QRCodes'
+      shell: pwsh
+
     - name: 🚀 Push NuGet packages
       run: dotnet nuget push ${{ runner.temp }}/deployables/*.nupkg --source https://api.nuget.org/v3/index.json -k '${{ secrets.NUGET_API_KEY }}'
