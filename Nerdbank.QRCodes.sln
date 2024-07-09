@@ -40,6 +40,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nerdbank.QRCodes.Tool.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nerdbank.QRCodes", "src\Nerdbank.QRCodes\Nerdbank.QRCodes.csproj", "{515A71A4-76BC-40BA-8B94-400D9C3468A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nerdbank.QRCodes.Tests", "test\Nerdbank.QRCodes.Tests\Nerdbank.QRCodes.Tests.csproj", "{CF0292DA-9D70-49B7-A944-0F5FE6EE5F06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{515A71A4-76BC-40BA-8B94-400D9C3468A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{515A71A4-76BC-40BA-8B94-400D9C3468A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{515A71A4-76BC-40BA-8B94-400D9C3468A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF0292DA-9D70-49B7-A944-0F5FE6EE5F06}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{CF0292DA-9D70-49B7-A944-0F5FE6EE5F06}.Debug|Any CPU.Build.0 = Debug|x64
+		{CF0292DA-9D70-49B7-A944-0F5FE6EE5F06}.Release|Any CPU.ActiveCfg = Release|x64
+		{CF0292DA-9D70-49B7-A944-0F5FE6EE5F06}.Release|Any CPU.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +74,7 @@ Global
 		{9C175B2C-19A9-4CDD-8DE3-C64B0F89E545} = {D1A0EC7F-4B22-4D6E-A7AE-216278FBBD8D}
 		{A9895B62-5DBC-4569-8AD8-00A33ABB02A3} = {A5E88D6F-5FF6-41AF-B870-4063C8264ECB}
 		{515A71A4-76BC-40BA-8B94-400D9C3468A8} = {D1A0EC7F-4B22-4D6E-A7AE-216278FBBD8D}
+		{CF0292DA-9D70-49B7-A944-0F5FE6EE5F06} = {A5E88D6F-5FF6-41AF-B870-4063C8264ECB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E3944F6A-384B-4B0F-B93F-3BD513DC57BD}

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net7.0-windows</TargetFrameworks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,9 +12,6 @@
   <ItemGroup Condition="'$(TargetFramework)'=='net7.0'">
     <PackageReference Include="System.Drawing.Common" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net7.0-windows'">
-    <PackageReference Include="ZXing.Net" />
-    <PackageReference Include="ZXing.Net.Bindings.Windows.Compatibility" />
-  </ItemGroup>
 
+  <Import Project="NativeBindings.targets" />
 </Project>

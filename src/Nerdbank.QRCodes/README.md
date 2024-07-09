@@ -2,7 +2,7 @@
 
 ## Features
 
-* Decode a QR code (using the excellent ZXing.Net library, Windows only) from a high quality render or a photo with a QR code somewhere in the image.
+* Decode a QR code from a high quality render or a photo with a QR code somewhere in the image.
 * Encode data in a QR code (using the excellent QRCoder library) supporting several graphic formats (some Windows only) and even as ASCII art.
 
 ## Usage
@@ -32,5 +32,3 @@ if (QRDecoder.TryDecode(bitmap, out string? data))
 	Console.WriteLine(data);
 }
 ```
-
-Today this requires running on Windows.
