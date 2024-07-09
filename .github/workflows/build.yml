@@ -46,6 +46,7 @@ jobs:
       shell: pwsh
     - name: 🛠️ cargo build
       run: src/nerdbank-qrcodes/build_all.ps1 -Release
+      shell: pwsh
     - name: 🛠 dotnet build
       run: dotnet build -t:build --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnaserror /bl:"${{ runner.temp }}/_artifacts/build_logs/build.binlog"
     - name: 🧪 test
