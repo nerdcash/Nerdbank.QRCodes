@@ -47,8 +47,10 @@ jobs:
         run: src/nerdbank-qrcodes/build_all.ps1 -Release
         shell: pwsh
       - name: 🛠 dotnet build
-        run: dotnet build -t:build -p:x64 --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnaserror /bl:"${{ runner.temp }}/_artifacts/build_logs/build.binlog"
-      - name: 🧪 test
+        run: |
+          dotnet build -t:build -p:x64 --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnaserror /bl:"${{ runner.temp }}/_artifacts/build_logs/build_x64.binlog"
+          dotnet build -t:build -p:arm64 --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnaserror /bl:"${{ runner.temp }}/_artifacts/build_logs/build_arm64.binlog"
+      - name: 🧪 dotnet test
         run: azure-pipelines/dotnet-test-cloud.ps1 -Configuration ${{ env.BUILDCONFIGURATION }} -Agent ${{ runner.os }}
         shell: pwsh
       - name: ⚙ Update pipeline variables based on build outputs
