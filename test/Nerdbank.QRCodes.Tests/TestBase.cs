@@ -18,4 +18,10 @@ public abstract class TestBase
 		stream.CopyTo(ms);
 		return ms.GetBuffer().AsMemory(0, (int)ms.Length);
 	}
+
+	protected static string GetResourceFilePath(string name)
+	{
+		string path = Path.Combine(ThisAssembly.ResourcePath, name);
+		return File.Exists(path) ? path : throw new ArgumentException($"No resource by the name of \"{name}\" was found.");
+	}
 }
