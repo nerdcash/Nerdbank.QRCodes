@@ -1,0 +1,39 @@
+parameters:
+- name: RunTests
+- name: test_target
+- name: checks
+  type: boolean
+  default: false
+
+steps:
+- task: Cache@2
+  inputs:
+    key: '"cargo" | "$(Agent.OS)" | "private2"'
+    path: $(Build.SourcesDirectory)/src/nerdbank-qrcodes/target
+  displayName: 🧠 cache cargo build
+# - task: Cache@2
+#   inputs:
+#     key: '"cargo-registry" | "$(Agent.OS)" | "private2"'
+#     path: $(HOME)/.cargo/registry
+#   displayName: cache cargo registry
+
+- template: install-cargo-dependencies.yml
+
+- pwsh: src/nerdbank-qrcodes/build_all.ps1 -Release
+  displayName: 🛠️ cargo build
+
+- pwsh: cargo nextest run -r --target ${{ parameters.test_target }}
+  displayName: 🧪 cargo test
+  workingDirectory: src/nerdbank-qrcodes
+  env:
+    RUST_BACKTRACE: 1
+  condition: and(succeeded(), ne('${{ parameters.test_target }}', ''), ${{ parameters.RunTests }})
+
+- ${{ if parameters.checks }}:
+  - pwsh: cargo clippy -r --target=${{ parameters.test_target }} -- -D warnings
+    displayName: 🧼 cargo clippy
+    workingDirectory: src/nerdbank-qrcodes
+
+  - pwsh: cargo fmt --check
+    displayName: 📝 cargo fmt
+    workingDirectory: src/nerdbank-qrcodes
