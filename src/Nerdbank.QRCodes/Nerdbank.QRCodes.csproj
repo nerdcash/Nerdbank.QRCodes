@@ -9,8 +9,10 @@
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
     <PackageReference Include="QRCoder" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net7.0'">
-    <PackageReference Include="System.Drawing.Common" />
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(TargetFramework)\PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
   <Import Project="NativeBindings.targets" />

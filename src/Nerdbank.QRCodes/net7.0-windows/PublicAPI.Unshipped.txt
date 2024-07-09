@@ -25,4 +25,5 @@ Nerdbank.QRCodes.QREncoder.NoPadding.get -> bool
 Nerdbank.QRCodes.QREncoder.NoPadding.set -> void
 static Nerdbank.QRCodes.QRDecoder.TryDecode(System.Drawing.Bitmap! qrcodePhoto, out string? data) -> bool
 static Nerdbank.QRCodes.QRDecoder.TryDecode(System.ReadOnlySpan<byte> image, out string? data) -> bool
+static Nerdbank.QRCodes.QRDecoder.TryDecode(System.ReadOnlySpan<char> imagePath, out string? data) -> bool
 static Nerdbank.QRCodes.QREncoder.SupportedExtensions.get -> System.Collections.Generic.IReadOnlySet<string!>!

@@ -20,7 +20,7 @@ internal static unsafe class NativeMethods
 	/// <returns>
 	/// The number of characters in the QR code. This may exceed the length of <paramref name="decoded"/>, in which case the caller should repeat the call with a larger buffer.
 	/// </returns>
-	internal static unsafe uint DecodeQrCodeFromFile(string filePath, Span<char> decoded)
+	internal static unsafe uint DecodeQrCodeFromFile(ReadOnlySpan<char> filePath, Span<char> decoded)
 	{
 		fixed (char* filePathPtr = filePath)
 		{

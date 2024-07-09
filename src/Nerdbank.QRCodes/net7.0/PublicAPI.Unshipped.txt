@@ -1,0 +1,28 @@
+Nerdbank.QRCodes.QRDecoder
+Nerdbank.QRCodes.QREncoder
+Nerdbank.QRCodes.QREncoder.BackgroundColor.get -> System.Drawing.Color
+Nerdbank.QRCodes.QREncoder.BackgroundColor.set -> void
+Nerdbank.QRCodes.QREncoder.DarkColor.get -> System.Drawing.Color
+Nerdbank.QRCodes.QREncoder.DarkColor.set -> void
+Nerdbank.QRCodes.QREncoder.ECCLevel.get -> QRCoder.QRCodeGenerator.ECCLevel
+Nerdbank.QRCodes.QREncoder.ECCLevel.set -> void
+Nerdbank.QRCodes.QREncoder.Encode(QRCoder.QRCodeData! data, string! fileFormatExtension, System.Diagnostics.TraceSource? traceSource) -> byte[]!
+Nerdbank.QRCodes.QREncoder.Encode(QRCoder.QRCodeData! data, System.IO.FileInfo! outputFile, System.Diagnostics.TraceSource? traceSource) -> void
+Nerdbank.QRCodes.QREncoder.QREncoder() -> void
+Nerdbank.QRCodes.QREncoder.IconBackgroundColor.get -> System.Drawing.Color?
+Nerdbank.QRCodes.QREncoder.IconBackgroundColor.set -> void
+Nerdbank.QRCodes.QREncoder.IconBorderWidth.get -> int
+Nerdbank.QRCodes.QREncoder.IconBorderWidth.set -> void
+Nerdbank.QRCodes.QREncoder.IconPath.get -> System.IO.FileInfo?
+Nerdbank.QRCodes.QREncoder.IconPath.set -> void
+Nerdbank.QRCodes.QREncoder.IconSizePercent.get -> int
+Nerdbank.QRCodes.QREncoder.IconSizePercent.set -> void
+Nerdbank.QRCodes.QREncoder.LightColor.get -> System.Drawing.Color
+Nerdbank.QRCodes.QREncoder.LightColor.set -> void
+Nerdbank.QRCodes.QREncoder.ModuleSize.get -> int
+Nerdbank.QRCodes.QREncoder.ModuleSize.set -> void
+Nerdbank.QRCodes.QREncoder.NoPadding.get -> bool
+Nerdbank.QRCodes.QREncoder.NoPadding.set -> void
+static Nerdbank.QRCodes.QRDecoder.TryDecode(System.ReadOnlySpan<byte> image, out string? data) -> bool
+static Nerdbank.QRCodes.QRDecoder.TryDecode(System.ReadOnlySpan<char> imagePath, out string? data) -> bool
+static Nerdbank.QRCodes.QREncoder.SupportedExtensions.get -> System.Collections.Generic.IReadOnlySet<string!>!
