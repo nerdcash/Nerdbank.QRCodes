@@ -12,6 +12,9 @@ public class QRDecoderTests : TestBase
 	[Theory, MemberData(nameof(SupportedFileTypesData))]
 	public void TryDecode_Span(string extension) => AssertQRCode("Hello, World!", $"Generated1.{extension}");
 
+	[Fact(Skip = "Does not yet pass. Need better decoder library.")]
+	public void RealPhoto() => AssertQRCode("Hello, World!", "realphoto_zcash_payment_request.jpg");
+
 	[Fact]
 	public void TryDecode_Path()
 	{
