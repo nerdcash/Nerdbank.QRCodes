@@ -36,7 +36,7 @@ public static class QRDecoder
 	/// <summary>
 	/// Searches for and decodes a QR code from a buffer containing an image or photo.
 	/// </summary>
-	/// <param name="image">The buffer containing an image (e.g. png, bmp, jpg) that may contain a QR code.</param>
+	/// <param name="image">The buffer containing an image (e.g. png, bmp, jpg, gif) that may contain a QR code.</param>
 	/// <param name="data">The text encoded by the QR code, if one is found; otherwise <see langword="null"/>.</param>
 	/// <returns><see langword="true"/> if a QR code was found and decoded; otherwise <see langword="false"/>.</returns>
 	public static bool TryDecode(ReadOnlySpan<byte> image, [NotNullWhen(true)] out string? data)
