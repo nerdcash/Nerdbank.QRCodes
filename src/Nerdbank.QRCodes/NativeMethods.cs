@@ -10,7 +10,7 @@ namespace Nerdbank.QRCodes;
 /// </summary>
 internal static unsafe class NativeMethods
 {
-	private const string LibraryName = "nerdbank_zcash_rust";
+	private const string LibraryName = "nerdbank_qrcodes";
 
 	/// <summary>
 	/// Decodes a QR code from an image saved to a file.

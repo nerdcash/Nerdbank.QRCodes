@@ -5,6 +5,7 @@ using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.Versioning;
 
 namespace Nerdbank.QRCodes;
 
@@ -19,6 +20,7 @@ public static class QRDecoder
 	/// <param name="qrcodePhoto">The bitmap that may contain a QR code.</param>
 	/// <param name="data">Receives the data encoded in the QR code, if found.</param>
 	/// <returns>A value indicating whether a QR code was found and decoded.</returns>
+	[SupportedOSPlatform("windows")]
 	public static bool TryDecode(Bitmap qrcodePhoto, [NotNullWhen(true)] out string? data)
 	{
 		if (qrcodePhoto is null)
