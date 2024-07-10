@@ -1,0 +1,18 @@
+steps:
+- pwsh: tools/Install-AndroidBuildTools.ps1
+  displayName: ⚙️ install android tooling
+
+- task: Cache@2
+  inputs:
+    key: '"cargo" | "$(Agent.OS)" | "Android"'
+    path: $(Build.SourcesDirectory)/src/nerdbank-qrcodes/target
+  displayName: 🧠 cache cargo build
+
+- pwsh: ./build_all.ps1 -AndroidEmulatorOnly -AndroidDeviceOnly -Release -SkipCsBindings
+  displayName: 🛠️ build android
+  workingDirectory: src/nerdbank-qrcodes
+
+- powershell: azure-pipelines/artifacts/_pipelines.ps1 -ArtifactNameSuffix "-$(Agent.JobName)" -Verbose
+  failOnStderr: true
+  displayName: 📢 Publish artifacts
+  condition: succeededOrFailed()

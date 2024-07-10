@@ -20,6 +20,10 @@
     Per-machine requires elevation and will download and install all SDKs and runtimes to machine-wide locations so all applications can find it.
 .PARAMETER NoPrerequisites
     Skips the installation of prerequisite software (e.g. SDKs, tools).
+.PARAMETER NDK
+    Installs the Android NDK if it is not already present for local Android emulator or device development.
+.PARAMETER NoRust
+    Skips the installation of Rust targets.
 .PARAMETER NoNuGetCredProvider
     Skips the installation of the NuGet credential provider. Useful in pipelines with the `NuGetAuthenticate` task, as a workaround for https://github.com/microsoft/artifacts-credprovider/issues/244.
     This switch is ignored and installation is skipped when -NoPrerequisites is specified.
@@ -41,6 +45,10 @@ Param (
     [string]$InstallLocality = 'user',
     [Parameter()]
     [switch]$NoPrerequisites,
+    [Parameter()]
+    [switch]$NDK,
+    [Parameter()]
+    [switch]$NoRust,
     [Parameter()]
     [switch]$NoNuGetCredProvider,
     [Parameter()]
@@ -68,11 +76,20 @@ if (!$NoPrerequisites) {
         Exit 3010
     }
 
+    if (!$NoRust) {
+        $rustTargets = @(& "$PSScriptRoot\azure-pipelines\Get-RustTargets.ps1")
+        rustup target add @rustTargets
+    }
+
     # The procdump tool and env var is required for dotnet test to collect hang/crash dumps of tests.
     # But it only works on Windows.
     if ($env:OS -eq 'Windows_NT') {
         $EnvVars['PROCDUMP_PATH'] = & "$PSScriptRoot\azure-pipelines\Get-ProcDump.ps1"
     }
+}
+
+if ($NDK) {
+    & "$PSScriptRoot\tools\Install-AndroidNdk.ps1"
 }
 
 # Workaround nuget credential provider bug that causes very unreliable package restores on Azure Pipelines
@@ -90,7 +107,7 @@ try {
 
     if (!$NoRestore -and $PSCmdlet.ShouldProcess("NuGet packages", "Restore")) {
         Write-Host "Restoring NuGet packages" -ForegroundColor $HeaderColor
-        dotnet restore @RestoreArguments
+        dotnet restore @RestoreArguments -p:Platform=x64
         if ($lastexitcode -ne 0) {
             throw "Failure while restoring packages."
         }

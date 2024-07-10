@@ -8,6 +8,11 @@ parameters:
 - name: RunTests
   type: boolean
   default: true
+- name: publishPlatforms
+  type: object
+  default:
+  - x64
+  - ARM64
 
 jobs:
 - job: Windows
@@ -21,6 +26,11 @@ jobs:
   - script: dotnet nbgv cloud -c
     displayName: ⚙ Set build number
 
+  - template: cargo.yml
+    parameters:
+      test_target: x86_64-pc-windows-msvc
+      RunTests: ${{ parameters.RunTests }}
+
   - template: dotnet.yml
     parameters:
       RunTests: ${{ parameters.RunTests }}
@@ -32,12 +42,30 @@ jobs:
   - checkout: self
     fetchDepth: 0 # avoid shallow clone so nbgv can do its work.
     clean: true
-  - template: install-dependencies.yml
+  - template: cargo.yml
+    parameters:
+      test_target: x86_64-unknown-linux-gnu
+      RunTests: ${{ parameters.RunTests }}
+      checks: true
   - template: dotnet.yml
     parameters:
       RunTests: ${{ parameters.RunTests }}
   - script: dotnet format --verify-no-changes --no-restore
     displayName: 💅 Verify formatted code
+
+- job: android
+  displayName: android
+  pool:
+    name: CustomAgents
+    demands:
+    - Agent.OS -equals Linux
+  steps:
+  - checkout: self
+    fetchDepth: 1
+    clean: true
+    submodules: true
+
+  - template: android.yml
 
 - job: macOS
   condition: ${{ parameters.includeMacOS }}
@@ -48,9 +76,43 @@ jobs:
     fetchDepth: 0 # avoid shallow clone so nbgv can do its work.
     clean: true
   - template: install-dependencies.yml
+  - template: cargo.yml
+    parameters:
+      RunTests: ${{ parameters.RunTests }}
+      test_target: x86_64-apple-darwin
+  - pwsh: cargo binstall -y cross@0.2.5
+    displayName: ⚙️ install cross
+  - pwsh: |
+      Remove-Item -Recurse -Force target/release # cross build fails if this directory has files from prior steps. I don't know why it even exists.
+      cross build -r --target=aarch64-unknown-linux-gnu
+    displayName: 🛠️ build linux-arm64
+    workingDirectory: src/nerdbank-qrcodes
   - template: dotnet.yml
     parameters:
       RunTests: ${{ parameters.RunTests }}
+
+- job: Pack
+  displayName: dotnet pack
+  dependsOn:
+  - Windows
+  - Linux
+  - macOS
+  - android
+  pool:
+    name: CustomAgents
+    demands:
+    - Agent.OS -equals Linux
+  variables:
+  - group: Android signing
+  steps:
+  - checkout: self
+    fetchDepth: 0 # avoid shallow clone so nbgv can do its work.
+    clean: true
+    submodules: true
+  - template: install-dependencies.yml
+  - template: pack.yml
+    parameters:
+      signArtifacts: ${{ parameters.signArtifacts }}
 
 - job: WrapUp
   dependsOn:
