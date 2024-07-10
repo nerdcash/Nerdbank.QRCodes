@@ -27,7 +27,7 @@ jobs:
           - windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
       - name: ⚙ Install prerequisites
@@ -133,7 +133,7 @@ jobs:
   android:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
     - name: ⚙️ install android tooling
@@ -159,7 +159,7 @@ jobs:
     - android
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
 
@@ -222,7 +222,7 @@ jobs:
     needs: pack
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
