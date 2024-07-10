@@ -130,8 +130,29 @@ jobs:
         continue-on-error: true
         if: always()
 
+  android:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: ⚙️ install android tooling
+      run: ./tools/Install-AndroidBuildTools.ps1
+      shell: pwsh
+    - run: ./build_all.ps1 -AndroidEmulatorOnly -AndroidDeviceOnly -Release -SkipCsBindings
+      name: 🛠️ build android
+      working-directory:  src/nerdbank-qrcodes
+      shell: pwsh
+    - run: azure-pipelines/artifacts/_pipelines.ps1 -ArtifactNameSuffix "-$(Agent.JobName)" -Verbose
+      name: 📢 Publish artifacts
+      if: always()
+    - name: 📢 Upload rust
+      uses: actions/upload-artifact@v1
+      with:
+        name: rust-android
+        path: ${{ runner.temp }}/_artifacts/rust
+
   pack:
-    needs: build
+    needs:
+    - build
+    - android
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -157,6 +178,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: rust-Linux
+          path: src/nerdbank-qrcodes/target
+
+      - name: 🔻 Download android artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: rust-android
           path: src/nerdbank-qrcodes/target
 
       - name: 🔻 Download windows artifacts
