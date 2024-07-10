@@ -205,6 +205,11 @@ jobs:
       - name: 🛠 dotnet pack
         run: dotnet pack --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnaserror /bl:"${{ runner.temp }}/_artifacts/build_logs/build.binlog"
 
+      - name: 📥 Collect artifacts
+        run: azure-pipelines/artifacts/_stage_all.ps1
+        shell: pwsh
+        if: always()
+
       - name: 📢 Upload deployables
         uses: actions/upload-artifact@v1
         with:
