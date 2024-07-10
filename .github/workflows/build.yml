@@ -213,7 +213,7 @@ jobs:
       - name: 📢 Upload deployables
         uses: actions/upload-artifact@v1
         with:
-          name: deployables-${{ runner.os }}
+          name: deployables
           path: ${{ runner.temp }}/_artifacts/deployables
         if: always()
 
@@ -229,7 +229,7 @@ jobs:
       - name: 🔻 Download deployables artifacts
         uses: actions/download-artifact@v3
         with:
-          name: deployables-Linux
+          name: deployables
           path: ${{ runner.temp }}/deployables
 
       - name: 🔏 Code sign
