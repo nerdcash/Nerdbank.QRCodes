@@ -182,25 +182,25 @@ jobs:
         shell: pwsh
 
       - name: 🔻 Download linux artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: rust-Linux
           path: src/nerdbank-qrcodes/target
 
       - name: 🔻 Download android artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: rust-android
           path: src/nerdbank-qrcodes/target
 
       - name: 🔻 Download windows artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: rust-Windows
           path: src/nerdbank-qrcodes/target
 
       - name: 🔻 Download macOS artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: rust-macOS
           path: src/nerdbank-qrcodes/target
@@ -230,7 +230,7 @@ jobs:
           fetch-depth: 1
 
       - name: 🔻 Download deployables artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: deployables
           path: ${{ runner.temp }}/deployables
