@@ -133,6 +133,9 @@ jobs:
   android:
     runs-on: ubuntu-20.04
     steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
     - name: ⚙️ install android tooling
       run: ./tools/Install-AndroidBuildTools.ps1
       shell: pwsh
