@@ -149,23 +149,27 @@ jobs:
           }
         shell: pwsh
 
+      - name: 🪪 3rd party licenses
+        run: src/nerdbank-qrcodes/Generate-3rdPartyNotices.ps1
+        shell: pwsh
+
       - name: 🔻 Download linux artifacts
         uses: actions/download-artifact@v3
         with:
           name: rust-Linux
-          path: ${{ runner.temp }}/rust
+          path: src/nerdbank-qrcodes/target
 
       - name: 🔻 Download windows artifacts
         uses: actions/download-artifact@v3
         with:
           name: rust-Windows
-          path: ${{ runner.temp }}/rust
+          path: src/nerdbank-qrcodes/target
 
       - name: 🔻 Download macOS artifacts
         uses: actions/download-artifact@v3
         with:
           name: rust-macOS
-          path: ${{ runner.temp }}/rust
+          path: src/nerdbank-qrcodes/target
 
       - name: 🛠 dotnet pack
         run: dotnet pack --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnaserror /bl:"${{ runner.temp }}/_artifacts/build_logs/build.binlog"
