@@ -139,12 +139,13 @@ jobs:
     - name: ⚙️ install android tooling
       run: ./tools/Install-AndroidBuildTools.ps1
       shell: pwsh
-    - run: ./build_all.ps1 -AndroidEmulatorOnly -AndroidDeviceOnly -Release -SkipCsBindings
+    - run: ./build_all.ps1 -AndroidEmulatorOnly -AndroidDeviceOnly -Release
       name: 🛠️ build android
       working-directory:  src/nerdbank-qrcodes
       shell: pwsh
-    - run: azure-pipelines/artifacts/_pipelines.ps1 -ArtifactNameSuffix "-$(Agent.JobName)" -Verbose
-      name: 📢 Publish artifacts
+    - name: 📥 Collect artifacts
+      run: azure-pipelines/artifacts/_stage_all.ps1
+      shell: pwsh
       if: always()
     - name: 📢 Upload rust
       uses: actions/upload-artifact@v1
