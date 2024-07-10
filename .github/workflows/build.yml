@@ -47,7 +47,7 @@ jobs:
         run: src/nerdbank-qrcodes/build_all.ps1 -Release
         shell: pwsh
 
-      - uses: taiki-e/cache-cargo-install-action@v2
+      - uses: taiki-e/install-action@v2
         with:
           tool: cross
         if: startsWith(matrix.os, 'ubuntu')
