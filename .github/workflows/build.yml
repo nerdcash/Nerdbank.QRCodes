@@ -139,6 +139,10 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
+    - uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-ndk@3
+      name: ⚙️ Install cargo-ndk
     - name: ⚙️ install android tooling
       run: ./tools/Install-AndroidBuildTools.ps1
       shell: pwsh
