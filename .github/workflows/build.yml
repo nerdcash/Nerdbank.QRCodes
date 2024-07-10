@@ -177,6 +177,11 @@ jobs:
           }
         shell: pwsh
 
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-bundle-licenses
+        name: ⚙️ Install cargo-bundle-licenses
+
       - name: 🪪 3rd party licenses
         run: src/nerdbank-qrcodes/Generate-3rdPartyNotices.ps1
         shell: pwsh
