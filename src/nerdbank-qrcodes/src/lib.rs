@@ -1,13 +1,16 @@
-use encoding::all::UTF_16LE;
-use encoding::DecoderTrap;
-use encoding::Encoding;
-use image::{self, DynamicImage, ImageResult};
-use rqrr::PreparedImage;
+use encoding::{all::UTF_16LE, DecoderTrap, Encoding};
+use image::{self, DynamicImage};
+use rxing::{
+    common::HybridBinarizer, BarcodeFormat, BinaryBitmap, BufferedImageLuminanceSource,
+    DecodeHintType, DecodeHintValue, DecodingHintDictionary, Exceptions, MultiFormatReader,
+    RXingResult, Reader,
+};
+use std::collections::{HashMap, HashSet};
 
+const QR_DECODE_NO_QR_CODE: i32 = 0;
 const INVALID_UTF16_STRING: i32 = -1;
 const IMAGE_ERROR: i32 = -2;
 const QR_DECODE_ERROR: i32 = -3;
-const QR_DECODE_NO_QR_CODE: i32 = 0;
 
 #[no_mangle]
 pub extern "C" fn decode_qr_code_from_file(
@@ -23,7 +26,11 @@ pub extern "C" fn decode_qr_code_from_file(
         Err(_) => return INVALID_UTF16_STRING,
     };
 
-    decode_qr_code_interop_helper(image::open(file_path), decoded, decoded_length)
+    process_result(
+        rxing::helpers::detect_in_file(file_path.as_str(), Some(rxing::BarcodeFormat::QR_CODE)),
+        decoded,
+        decoded_length,
+    )
 }
 
 #[no_mangle]
@@ -35,22 +42,26 @@ pub extern "C" fn decode_qr_code_from_image(
 ) -> i32 {
     let image_buffer = unsafe { std::slice::from_raw_parts(image_buffer, image_buffer_len) };
 
-    decode_qr_code_interop_helper(
-        image::load_from_memory(image_buffer),
-        decoded,
-        decoded_length,
-    )
+    if let Ok(image) = image::load_from_memory(image_buffer) {
+        process_result(
+            detect_in_file_with_hints(image, Some(BarcodeFormat::QR_CODE), &mut HashMap::new()),
+            decoded,
+            decoded_length,
+        )
+    } else {
+        IMAGE_ERROR
+    }
 }
 
-fn decode_qr_code_interop_helper(
-    image: ImageResult<DynamicImage>,
+fn process_result(
+    r: Result<RXingResult, Exceptions>,
     decoded: *mut u16,
     decoded_length: usize,
 ) -> i32 {
-    match decode_qr_code_helper(image) {
-        Ok(content) => {
+    match r {
+        Ok(r) => {
             let decoded_slice = unsafe { std::slice::from_raw_parts_mut(decoded, decoded_length) };
-            let content = content.encode_utf16();
+            let content = r.getText().encode_utf16();
 
             let mut content_len = 0;
             for (i, c) in content.enumerate() {
@@ -61,20 +72,33 @@ fn decode_qr_code_interop_helper(
             }
             content_len
         }
-        Err(e) => e,
+        Err(e) => match e {
+            rxing::Exceptions::NotFoundException(_) => QR_DECODE_NO_QR_CODE,
+            _ => QR_DECODE_ERROR,
+        },
     }
 }
 
-fn decode_qr_code_helper(image: ImageResult<DynamicImage>) -> Result<String, i32> {
-    let image = image.map_err(|_e| IMAGE_ERROR)?;
-    let image = image.to_luma8();
-    let mut img = PreparedImage::prepare(image);
-    let grids = img.detect_grids();
-    match grids.len() {
-        0 => Err(QR_DECODE_NO_QR_CODE),
-        _ => {
-            let (_, content) = grids[0].decode().map_err(|_e| QR_DECODE_ERROR)?;
-            Ok(content)
-        }
+fn detect_in_file_with_hints(
+    img: DynamicImage,
+    barcode_type: Option<BarcodeFormat>,
+    hints: &mut DecodingHintDictionary,
+) -> Result<RXingResult, Exceptions> {
+    let mut multi_format_reader = MultiFormatReader::default();
+
+    if let Some(bc_type) = barcode_type {
+        hints.insert(
+            DecodeHintType::POSSIBLE_FORMATS,
+            DecodeHintValue::PossibleFormats(HashSet::from([bc_type])),
+        );
     }
+
+    hints
+        .entry(DecodeHintType::TRY_HARDER)
+        .or_insert(DecodeHintValue::TryHarder(true));
+
+    multi_format_reader.decode_with_hints(
+        &mut BinaryBitmap::new(HybridBinarizer::new(BufferedImageLuminanceSource::new(img))),
+        hints,
+    )
 }
