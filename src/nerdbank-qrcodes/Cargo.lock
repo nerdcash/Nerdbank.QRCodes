@@ -1194,9 +1194,9 @@ dependencies = [
 
 [[package]]
 name = "rxing"
-version = "0.5.10"
+version = "0.5.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b88b9512ac01c28228f5c1dac53fa4752320e84af65929dcf09572e5d9efe2ef"
+checksum = "8ef07e1242d55503cae78f8f3527776834467f8b09dcb539ad4a6a5787d90e94"
 dependencies = [
  "bit_reverse",
  "chrono",
