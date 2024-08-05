@@ -15,4 +15,4 @@ codegen-units = 1
 [dependencies]
 encoding = "0.2.33"
 image = "0.25.2"
-rxing = "0.5.10"
+rxing = "0.6.1"
