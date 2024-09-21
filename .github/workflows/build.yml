@@ -59,6 +59,11 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         working-directory: src/nerdbank-qrcodes
 
+      - name: 📱 Build iOS Framework
+        run: azure-pipelines/build_ios_framework.ps1
+        shell: pwsh
+        if: startsWith(matrix.os, 'macos')
+
       - name: 🛠 dotnet build
         run: |
           dotnet build -t:build -p:Platform=x64 --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnaserror /bl:"${{ runner.temp }}/_artifacts/build_logs/build_x64.binlog"
@@ -126,6 +131,12 @@ jobs:
           name: rust-${{ runner.os }}
           path: ${{ runner.temp }}/_artifacts/rust
         if: always()
+      - name: 📢 Upload ios_framework
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios_framework
+          path: ${{ runner.temp }}/_artifacts/ios_framework
+        if: startsWith(matrix.os, 'macos')
       - name: 📢 Publish code coverage results to codecov.io
         run: ./azure-pipelines/publish-CodeCov.ps1 -CodeCovToken "${{ secrets.CODECOV_TOKEN }}" -PathToCodeCoverage "${{ runner.temp }}/_artifacts/coverageResults" -Name "${{ runner.os }} Coverage Results" -Flags "${{ runner.os }}Host,${{ env.BUILDCONFIGURATION }}"
         shell: pwsh
@@ -213,6 +224,12 @@ jobs:
         with:
           name: rust-macOS
           path: src/nerdbank-qrcodes/target
+
+      - name: 🔻 Download iOS framework
+        uses: actions/download-artifact@v4
+        with:
+          name: ios_framework
+          path: bin/release/nerdbank_qrcodes.framework
 
       - name: 🛠 dotnet pack
         run: dotnet pack --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnaserror /bl:"${{ runner.temp }}/_artifacts/build_logs/build.binlog"
