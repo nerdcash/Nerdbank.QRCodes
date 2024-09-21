@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net8.0-windows</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>Provides QR code encoding and decoding functions.</Description>
   </PropertyGroup>
 
   <ItemGroup>
