@@ -69,7 +69,11 @@
 
     <!-- iOS -->
     <MobileRustBinary Condition="'$(Platform)'=='AnyCPU' or ('$(Platform)'=='arm64' and $([MSBuild]::IsOsPlatform('OSX')))" Include="$(iOSFrameworkPath)/**">
-      <PackagePath>runtimes/ios-universal/native/$(iOSFrameworkName)/</PackagePath>
+      <PackagePath>lib/net8.0-ios17.0/Nerdbank.QRCodes.resources/$(iOSFrameworkName)/</PackagePath>
+      <TargetOS>iOS</TargetOS>
+    </MobileRustBinary>
+    <MobileRustBinary Condition="'$(Platform)'=='AnyCPU' or ('$(Platform)'=='arm64' and $([MSBuild]::IsOsPlatform('OSX')))" Include="$(RepoRootPath)/azure-pipelines/manifest">
+      <PackagePath>lib/net8.0-ios17.0/Nerdbank.QRCodes.resources/</PackagePath>
       <TargetOS>iOS</TargetOS>
     </MobileRustBinary>
   </ItemGroup>
