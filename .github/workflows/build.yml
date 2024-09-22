@@ -229,7 +229,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ios_framework
-          path: bin/release/nerdbank_qrcodes.framework
+          path: bin/release/nerdbank_qrcodes.xcframework
 
       - name: 🛠 dotnet pack
         run: dotnet pack --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnaserror /bl:"${{ runner.temp }}/_artifacts/build_logs/build.binlog"

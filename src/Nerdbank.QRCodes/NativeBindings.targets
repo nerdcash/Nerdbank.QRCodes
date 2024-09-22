@@ -7,7 +7,7 @@
     <RustOutputAndroidArm64>$(RustOutputDirBase)aarch64-linux-android/$(RustConfiguration)/libnerdbank_qrcodes.so</RustOutputAndroidArm64>
     <RustOutputAndroidX64>$(RustOutputDirBase)x86_64-linux-android/$(RustConfiguration)/libnerdbank_qrcodes.so</RustOutputAndroidX64>
 
-    <iOSFrameworkName>nerdbank_qrcodes.framework</iOSFrameworkName>
+    <iOSFrameworkName>nerdbank_qrcodes.xcframework</iOSFrameworkName>
     <iOSFrameworkPath>$(RepoRootPath)bin/$(RustConfiguration)/$(iOSFrameworkName)</iOSFrameworkPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
@@ -68,7 +68,7 @@
     </DesktopRustBinary>
 
     <!-- iOS -->
-    <MobileRustBinary Condition="'$(Platform)'=='AnyCPU' or ('$(Platform)'=='arm64' and $([MSBuild]::IsOsPlatform('OSX')))" Include="$(iOSFrameworkPath)/*">
+    <MobileRustBinary Condition="'$(Platform)'=='AnyCPU' or ('$(Platform)'=='arm64' and $([MSBuild]::IsOsPlatform('OSX')))" Include="$(iOSFrameworkPath)/**">
       <PackagePath>runtimes/ios-universal/native/$(iOSFrameworkName)/</PackagePath>
       <TargetOS>iOS</TargetOS>
     </MobileRustBinary>

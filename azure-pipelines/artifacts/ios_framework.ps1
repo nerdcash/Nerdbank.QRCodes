@@ -5,7 +5,7 @@ if (!$BuildConfiguration) {
 }
 
 $BuildConfiguration = $BuildConfiguration.ToLower()
-$FrameworkRoot = "$RepoRoot/bin/$BuildConfiguration/nerdbank_qrcodes.framework"
+$FrameworkRoot = "$RepoRoot/bin/$BuildConfiguration/nerdbank_qrcodes.xcframework"
 
 if (!(Test-Path $FrameworkRoot))  { return }
 

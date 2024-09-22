@@ -4,10 +4,11 @@ param (
     [string]$Configuration = 'release'
 )
 
-$version = dotnet nbgv get-version -p $PSScriptRoot/../src/nerdbank-qrcodes -v SimpleVersion
+$repoRoot = Resolve-Path "$PSScriptRoot/.."
+$version = dotnet nbgv get-version -p $repoRoot/src/nerdbank-qrcodes -v SimpleVersion
 $plist = Get-Content $PSScriptRoot/Info.plist
 $plist = $plist.Replace('$version$', $version)
-$IntermediatePlistPath = "$PSScriptRoot/../obj/Info.plist"
+$IntermediatePlistPath = "$repoRoot/obj/Info.plist"
 Set-Content -Path $IntermediatePlistPath -Value $plist -Encoding utf8NoBOM
 if ($IsMacOS) {
     plutil -convert binary1 $IntermediatePlistPath
@@ -19,28 +20,41 @@ else {
 
 # copy Info.plist and the binary into the appropriate .framework directory structure
 # so that when NativeBindings.targets references it with ResolvedFileToPublish, it will be treated appropriately.
-$RustTargetBaseDir = Resolve-Path "$PSScriptRoot/../src/nerdbank-qrcodes/target"
+$RustTargetBaseDir = "$repoRoot/src/nerdbank-qrcodes/target"
 $RustDylibFileName = "libnerdbank_qrcodes.dylib"
-$Arm64RustOutput = "$RustTargetBaseDir/aarch64-apple-ios/$Configuration/$RustDylibFileName"
-$X64RustOutput = "$RustTargetBaseDir/x86_64-apple-ios/$Configuration/$RustDylibFileName"
+$DeviceRustOutput = "$RustTargetBaseDir/aarch64-apple-ios/$Configuration/$RustDylibFileName"
+$SimulatorX64RustOutput = "$RustTargetBaseDir/x86_64-apple-ios/$Configuration/$RustDylibFileName"
+$SimulatorArm64RustOutput = "$RustTargetBaseDir/aarch64-apple-ios-sim/$Configuration/$RustDylibFileName"
 
-$FrameworkDir = "$PSScriptRoot/../bin/$Configuration/nerdbank_qrcodes.framework"
-New-Item -Path $FrameworkDir -ItemType Directory -Force | Out-Null
-$FrameworkDir = Resolve-Path $FrameworkDir
+$DeviceFrameworkDir = "$repoRoot/bin/$Configuration/device/nerdbank_qrcodes.framework"
+$SimulatorFrameworkDir = "$repoRoot/bin/$Configuration/simulator/nerdbank_qrcodes.framework"
+New-Item -Path $DeviceFrameworkDir,$SimulatorFrameworkDir -ItemType Directory -Force | Out-Null
 
-Write-Host "Preparing Apple Framework at: $FrameworkDir" -ForegroundColor Cyan
+Write-Host "Preparing Apple iOS and iOS-simulator frameworks"
 
-Copy-Item $IntermediatePlistPath "$FrameworkDir/Info.plist"
+Copy-Item $IntermediatePlistPath "$DeviceFrameworkDir/Info.plist"
+Copy-Item $IntermediatePlistPath "$SimulatorFrameworkDir/Info.plist"
 Write-Host "Created Info.plist with version $version"
 
 if ($IsMacOS) {
-    # Create a universal binary that contains both arm64 and x64 architectures.
-    lipo -create -output $FrameworkDir/nerdbank_qrcodes $Arm64RustOutput $X64RustOutput
-    install_name_tool -id "@rpath/nerdbank_qrcodes.framework/nerdbank_qrcodes" "$FrameworkDir/nerdbank_qrcodes"
-    chmod +x "$FrameworkDir/nerdbank_qrcodes"
+    # Rename the binary that contains the arm64 architecture for device.
+    lipo -create -output $DeviceFrameworkDir/nerdbank_qrcodes $DeviceRustOutput
+    install_name_tool -id "@rpath/nerdbank_qrcodes.framework/nerdbank_qrcodes" "$DeviceFrameworkDir/nerdbank_qrcodes"
+    chmod +x "$DeviceFrameworkDir/nerdbank_qrcodes"
+
+    # Create a universal binary that contains both arm64 and x64 architectures for simulator.
+    lipo -create -output $SimulatorFrameworkDir/nerdbank_qrcodes $SimulatorX64RustOutput $SimulatorArm64RustOutput
+    install_name_tool -id "@rpath/nerdbank_qrcodes.framework/nerdbank_qrcodes" "$SimulatorFrameworkDir/nerdbank_qrcodes"
+    chmod +x "$SimulatorFrameworkDir/nerdbank_qrcodes"
 }
 else {
-    Copy-Item $Arm64RustOutput "$FrameworkDir/nerdbank_qrcodes"
+    Copy-Item $SimulatorArm64RustOutput "$SimulatorArm64RustOutput/nerdbank_qrcodes"
+    Copy-Item $DeviceRustOutput "$DeviceFrameworkDir/nerdbank_qrcodes"
     Write-Warning "Skipped critical steps because this is not macOS."
 }
 Write-Host "Copied nerdbank_qrcodes to framework"
+
+# Build the xcframework
+$xcframeworkOutputDir = "$repoRoot/bin/$Configuration/nerdbank_qrcodes.xcframework"
+xcodebuild -create-xcframework -framework $SimulatorFrameworkDir -framework $DeviceFrameworkDir -output $xcframeworkOutputDir
+Write-Host "Created nerdbank_qrcodes.xcframework at $xcframeworkOutputDir"
