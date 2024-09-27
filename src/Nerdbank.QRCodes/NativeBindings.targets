@@ -7,8 +7,8 @@
     <RustOutputAndroidArm64>$(RustOutputDirBase)aarch64-linux-android/$(RustConfiguration)/libnerdbank_qrcodes.so</RustOutputAndroidArm64>
     <RustOutputAndroidX64>$(RustOutputDirBase)x86_64-linux-android/$(RustConfiguration)/libnerdbank_qrcodes.so</RustOutputAndroidX64>
 
-    <RustOutputiOSArm64>$(RustOutputDirBase)aarch64-apple-ios/$(RustConfiguration)/libnerdbank_qrcodes.dylib</RustOutputiOSArm64>
-    <RustOutputiOSX64>$(RustOutputDirBase)x86_64-apple-ios/$(RustConfiguration)/libnerdbank_qrcodes.dylib</RustOutputiOSX64>
+    <iOSFrameworkName>nerdbank_qrcodes.xcframework</iOSFrameworkName>
+    <iOSFrameworkPath>$(RepoRootPath)bin/$(RustConfiguration)/$(iOSFrameworkName)</iOSFrameworkPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <MobileRustBinary>
@@ -68,12 +68,12 @@
     </DesktopRustBinary>
 
     <!-- iOS -->
-    <MobileRustBinary Condition="'$(Platform)'=='AnyCPU' or ('$(Platform)'=='arm64' and $([MSBuild]::IsOsPlatform('OSX')))" Include="$(RustOutputiOSArm64)">
-      <PackagePath>runtimes/ios-arm64/native/</PackagePath>
+    <MobileRustBinary Condition="'$(Platform)'=='AnyCPU' or ('$(Platform)'=='arm64' and $([MSBuild]::IsOsPlatform('OSX')))" Include="$(iOSFrameworkPath)/**">
+      <PackagePath>lib/net8.0-ios17.0/Nerdbank.QRCodes.resources/$(iOSFrameworkName)/</PackagePath>
       <TargetOS>iOS</TargetOS>
     </MobileRustBinary>
-    <MobileRustBinary Condition="'$(Platform)'=='AnyCPU' or ('$(Platform)'=='x64' and $([MSBuild]::IsOsPlatform('OSX')))" Include="$(RustOutputiOSX64)">
-      <PackagePath>runtimes/ios-x64/native/</PackagePath>
+    <MobileRustBinary Condition="'$(Platform)'=='AnyCPU' or ('$(Platform)'=='arm64' and $([MSBuild]::IsOsPlatform('OSX')))" Include="$(RepoRootPath)/azure-pipelines/manifest">
+      <PackagePath>lib/net8.0-ios17.0/Nerdbank.QRCodes.resources/</PackagePath>
       <TargetOS>iOS</TargetOS>
     </MobileRustBinary>
   </ItemGroup>

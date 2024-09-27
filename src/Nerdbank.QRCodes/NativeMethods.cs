@@ -10,7 +10,12 @@ namespace Nerdbank.QRCodes;
 /// </summary>
 internal static unsafe class NativeMethods
 {
+#if IOS
+	// https://github.com/xamarin/xamarin-macios/issues/21238
+	private const string LibraryName = "@rpath/nerdbank_qrcodes.framework/nerdbank_qrcodes";
+#else
 	private const string LibraryName = "nerdbank_qrcodes";
+#endif
 
 	/// <summary>
 	/// Decodes a QR code from an image saved to a file.
