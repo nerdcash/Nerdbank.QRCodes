@@ -46,6 +46,8 @@ jobs:
     - name: 🛠️ cargo build
       run: src/nerdbank-qrcodes/build_all.ps1 -Release
       shell: pwsh
+      env:
+        IPHONEOS_DEPLOYMENT_TARGET: 17.0
 
     - uses: taiki-e/install-action@v2
       with:

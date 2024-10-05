@@ -65,6 +65,8 @@ if ($Release) {
     $buildArgs += '-r'
 }
 
+Write-Host "IPHONEOS_DEPLOYMENT_TARGET: $($env:IPHONEOS_DEPLOYMENT_TARGET)"
+
 if ($env:TF_BUILD) {
     Write-Host "##[command]cargo $buildVerb $buildArgs"
 }
