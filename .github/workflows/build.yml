@@ -265,6 +265,8 @@ jobs:
 
     - name: 🔏 Code sign
       run: >
+        rm global.json # avoid a need to install a particular SDK version
+
         dotnet tool install --tool-path obj SignClient
 
         obj/SignClient sign
