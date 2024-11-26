@@ -219,9 +219,7 @@ checksum = "a21f936df1771bf62b77f047b726c4625ff2e8aa607c01ec06e5a05bd8463401"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
- "js-sys",
  "num-traits",
- "wasm-bindgen",
  "windows-targets",
 ]
 
@@ -1194,9 +1192,9 @@ dependencies = [
 
 [[package]]
 name = "rxing"
-version = "0.6.1"
+version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "786ea2f74b327842bab8c9e611fa3e40f1549d7931fb6e63d1fc2f84e06c2323"
+checksum = "b6b8d8a5e5e303c9ec1b19d3474a91199cbad86aa0c71dac739887317ea4a56f"
 dependencies = [
  "bit_reverse",
  "chrono",
