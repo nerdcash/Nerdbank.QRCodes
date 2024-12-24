@@ -1,6 +1,8 @@
 // Copyright (c) Andrew Arnott. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Xunit.Abstractions;
+
 public class QRDecoderTests(ITestOutputHelper logger) : TestBase
 {
 	public static readonly string[] SupportedFileTypes = ["bmp", "gif", "png", "jpg"];
