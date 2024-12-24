@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - main
+    - 'v*.*'
     - validate/*
   pull_request:
   workflow_dispatch:
@@ -85,7 +86,7 @@ jobs:
       shell: pwsh
     - name: 📢 Publish artifacts
       uses: ./.github/actions/publish-artifacts
-      if: always()
+      if: cancelled() == false
     - name: 📢 Publish code coverage results to codecov.io
       run: ./azure-pipelines/publish-CodeCov.ps1 -CodeCovToken "${{ secrets.CODECOV_TOKEN }}" -PathToCodeCoverage "${{ runner.temp }}/_artifacts/coverageResults" -Name "${{ runner.os }} Coverage Results" -Flags "${{ runner.os }}"
       shell: pwsh
