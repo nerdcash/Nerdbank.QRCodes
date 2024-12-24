@@ -114,10 +114,12 @@ try {
     }
 
     if (!$NoRestore -and $PSCmdlet.ShouldProcess("NuGet packages", "Restore")) {
-        Write-Host "Restoring NuGet packages" -ForegroundColor $HeaderColor
-        dotnet restore @RestoreArguments -p:Platform=x64
-        if ($lastexitcode -ne 0) {
-            throw "Failure while restoring packages."
+        'x64','arm64' |% {
+            Write-Host "Restoring NuGet packages for $_" -ForegroundColor $HeaderColor
+            dotnet restore @RestoreArguments -p:Platform=$_
+            if ($lastexitcode -ne 0) {
+                throw "Failure while restoring packages."
+            }
         }
     }
 
