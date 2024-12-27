@@ -42,7 +42,7 @@ jobs:
         }
       shell: pwsh
     - name: ⚙️ Set pipeline variables based on source
-      run: azure-pipelines/variables/_pipelines.ps1
+      run: tools/variables/_define.ps1
       shell: pwsh
     - name: 🛠️ cargo build
       run: src/nerdbank-qrcodes/build_all.ps1 -Release
@@ -72,7 +72,7 @@ jobs:
         dotnet build -p:Platform=x64 --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnAsError -warnNotAsError:NU1901,NU1902,NU1903,NU1904 /bl:"${{ runner.temp }}/_artifacts/build_logs/build_x64.binlog"
         dotnet build -p:Platform=ARM64 --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnAsError -warnNotAsError:NU1901,NU1902,NU1903,NU1904 /bl:"${{ runner.temp }}/_artifacts/build_logs/build_arm64.binlog"
     - name: 🧪 dotnet test
-      run: azure-pipelines/dotnet-test-cloud.ps1 -Configuration ${{ env.BUILDCONFIGURATION }} -Agent ${{ runner.os }}
+      run: tools/dotnet-test-cloud.ps1 -Configuration ${{ env.BUILDCONFIGURATION }} -Agent ${{ runner.os }}
       shell: pwsh
     - name: 💅🏻 Verify formatted code
       run: dotnet format --verify-no-changes --no-restore
@@ -82,13 +82,13 @@ jobs:
       run: dotnet docfx docfx/docfx.json --warningsAsErrors --disableGitFeatures
       if: runner.os == 'Linux'
     - name: ⚙ Update pipeline variables based on build outputs
-      run: azure-pipelines/variables/_pipelines.ps1
+      run: tools/variables/_define.ps1
       shell: pwsh
     - name: 📢 Publish artifacts
       uses: ./.github/actions/publish-artifacts
       if: cancelled() == false
     - name: 📢 Publish code coverage results to codecov.io
-      run: ./azure-pipelines/publish-CodeCov.ps1 -CodeCovToken "${{ secrets.CODECOV_TOKEN }}" -PathToCodeCoverage "${{ runner.temp }}/_artifacts/coverageResults" -Name "${{ runner.os }} Coverage Results" -Flags "${{ runner.os }}"
+      run: ./tools/publish-CodeCov.ps1 -CodeCovToken "${{ secrets.CODECOV_TOKEN }}" -PathToCodeCoverage "${{ runner.temp }}/_artifacts/coverageResults" -Name "${{ runner.os }} Coverage Results" -Flags "${{ runner.os }}"
       shell: pwsh
       timeout-minutes: 3
       continue-on-error: true
@@ -114,7 +114,7 @@ jobs:
       working-directory:  src/nerdbank-qrcodes
       shell: pwsh
     - name: 📥 Collect artifacts
-      run: azure-pipelines/artifacts/_stage_all.ps1
+      run: tools/artifacts/_stage_all.ps1
       shell: pwsh
       if: always()
     - name: 📢 Upload rust
@@ -189,7 +189,7 @@ jobs:
       run: dotnet pack --no-restore -c ${{ env.BUILDCONFIGURATION }} -warnAsError -warnNotAsError:NU1901,NU1902,NU1903,NU1904 /bl:"${{ runner.temp }}/_artifacts/build_logs/build.binlog"
 
     - name: 📥 Collect artifacts
-      run: azure-pipelines/artifacts/_stage_all.ps1
+      run: tools/artifacts/_stage_all.ps1
       shell: pwsh
       if: always()
 
