@@ -38,7 +38,7 @@ public class DecodeCommand
 		{
 			int exitCode = new DecodeCommand
 			{
-				InputPath = ctxt.GetValue(inputFile),
+				InputPath = ctxt.GetValue(inputFile)!,
 				Output = ctxt.InvocationConfiguration.Output,
 			}.Execute();
 			return Task.FromResult(exitCode);

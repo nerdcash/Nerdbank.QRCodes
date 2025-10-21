@@ -83,7 +83,7 @@ public class EncodeCommand
 		iconFileOption.Description = "The path to the file containing the logo to superimpose on the QR code.";
 		iconFileOption.Validators.Add(result =>
 		{
-			var file = result.GetValue(iconFileOption);
+			FileInfo? file = result.GetValue(iconFileOption);
 			if (file != null && !file.Exists)
 			{
 				result.AddError($"File does not exist: {file.FullName}");
@@ -153,7 +153,7 @@ public class EncodeCommand
 			new EncodeCommand
 			{
 				Output = ctxt.InvocationConfiguration.Output,
-				Text = ctxt.GetValue(textArg),
+				Text = ctxt.GetValue(textArg)!,
 				OutputFile = ctxt.GetValue(outputFileOption),
 				Encoder =
 				{
