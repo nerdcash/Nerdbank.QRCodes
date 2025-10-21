@@ -17,9 +17,9 @@ public class DecodeCommand
 	public required FileInfo InputPath { get; set; }
 
 	/// <summary>
-	/// Gets or sets the console.
+	/// Gets or sets the output writer.
 	/// </summary>
-	public IConsole? Console { get; set; }
+	public TextWriter? Output { get; set; }
 
 	/// <summary>
 	/// Creates the command.
@@ -27,17 +27,22 @@ public class DecodeCommand
 	/// <returns>The decoded text from the image.</returns>
 	public static Command CreateCommand()
 	{
-		Argument<FileInfo> inputFile = new("imagePath", "The path to the image to decode. Must be a .bmp file.");
+		Argument<FileInfo> inputFile = new("imagePath");
+		inputFile.Description = "The path to the image to decode. Must be a .bmp file.";
 
 		Command command = new("decode", "Reads the text from an image of a QR code.")
 		{
 			inputFile,
 		};
-		command.SetHandler(ctxt => ctxt.ExitCode = new DecodeCommand
+		command.SetAction(ctxt =>
 		{
-			InputPath = ctxt.ParseResult.GetValueForArgument(inputFile),
-			Console = ctxt.Console,
-		}.Execute());
+			int exitCode = new DecodeCommand
+			{
+				InputPath = ctxt.GetValue(inputFile),
+				Output = ctxt.InvocationConfiguration.Output,
+			}.Execute();
+			return Task.FromResult(exitCode);
+		});
 		return command;
 	}
 
@@ -51,16 +56,16 @@ public class DecodeCommand
 		using Bitmap bitmap = (Bitmap)Image.FromFile(this.InputPath.FullName);
 		if (QRDecoder.TryDecode(bitmap, out string? data))
 		{
-			this.Console?.WriteLine(data);
+			this.Output?.WriteLine(data);
 			return 0;
 		}
 		else
 		{
-			this.Console?.WriteLine("Failed to discover a QR code.");
+			this.Output?.WriteLine("Failed to discover a QR code.");
 			return 1;
 		}
 #else
-		this.Console?.WriteLine("This command is only supported on Windows.");
+		this.Output?.WriteLine("This command is only supported on Windows.");
 		return 2;
 #endif
 	}
