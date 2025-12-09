@@ -2,10 +2,9 @@ use encoding::{all::UTF_16LE, DecoderTrap, Encoding};
 use image::{self, DynamicImage};
 use rxing::{
     common::HybridBinarizer, BarcodeFormat, BinaryBitmap, BufferedImageLuminanceSource,
-    DecodeHintType, DecodeHintValue, DecodingHintDictionary, Exceptions, MultiFormatReader,
-    RXingResult, Reader,
+    DecodeHintValue, DecodeHints, Exceptions, MultiFormatReader, RXingResult, Reader,
 };
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 const QR_DECODE_NO_QR_CODE: i32 = 0;
 const INVALID_UTF16_STRING: i32 = -1;
@@ -44,7 +43,7 @@ pub extern "C" fn decode_qr_code_from_image(
 
     if let Ok(image) = image::load_from_memory(image_buffer) {
         process_result(
-            detect_in_file_with_hints(image, Some(BarcodeFormat::QR_CODE), &mut HashMap::new()),
+            detect_in_file_with_hints(image, Some(BarcodeFormat::QR_CODE)),
             decoded,
             decoded_length,
         )
@@ -82,23 +81,16 @@ fn process_result(
 fn detect_in_file_with_hints(
     img: DynamicImage,
     barcode_type: Option<BarcodeFormat>,
-    hints: &mut DecodingHintDictionary,
 ) -> Result<RXingResult, Exceptions> {
     let mut multi_format_reader = MultiFormatReader::default();
 
+    let mut hints = DecodeHints::default().with(DecodeHintValue::TryHarder(true));
     if let Some(bc_type) = barcode_type {
-        hints.insert(
-            DecodeHintType::POSSIBLE_FORMATS,
-            DecodeHintValue::PossibleFormats(HashSet::from([bc_type])),
-        );
+        hints = hints.with(DecodeHintValue::PossibleFormats(HashSet::from([bc_type])));
     }
-
-    hints
-        .entry(DecodeHintType::TRY_HARDER)
-        .or_insert(DecodeHintValue::TryHarder(true));
 
     multi_format_reader.decode_with_hints(
         &mut BinaryBitmap::new(HybridBinarizer::new(BufferedImageLuminanceSource::new(img))),
-        hints,
+        &hints,
     )
 }
