@@ -50,7 +50,7 @@ jobs:
       env:
         IPHONEOS_DEPLOYMENT_TARGET: 17.0
 
-    - uses: taiki-e/install-action@v2
+    - uses: taiki-e/install-action@cf46383a970594553a83cc6140075ef6a7f54dee # v2
       with:
         tool: cross
       if: startsWith(matrix.os, 'ubuntu')
@@ -105,7 +105,7 @@ jobs:
     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
-    - uses: taiki-e/install-action@v2
+    - uses: taiki-e/install-action@cf46383a970594553a83cc6140075ef6a7f54dee # v2
       with:
         tool: cargo-ndk@3
       name: ⚙️ Install cargo-ndk
@@ -149,7 +149,7 @@ jobs:
         }
       shell: pwsh
 
-    - uses: taiki-e/install-action@v2
+    - uses: taiki-e/install-action@cf46383a970594553a83cc6140075ef6a7f54dee # v2
       with:
         tool: cargo-bundle-licenses
       name: ⚙️ Install cargo-bundle-licenses
