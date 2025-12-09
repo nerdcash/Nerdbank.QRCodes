@@ -2,8 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.CommandLine;
-using System.CommandLine.Builder;
-using System.CommandLine.Parsing;
 using Nerdbank.QRCodes.Tool;
 
 RootCommand rootCommand = new("Offers QR code creation or reading functions.")
@@ -12,8 +10,4 @@ RootCommand rootCommand = new("Offers QR code creation or reading functions.")
 	DecodeCommand.CreateCommand(),
 };
 
-Parser parser = new CommandLineBuilder(rootCommand)
-	.UseDefaults()
-	.Build();
-
-await parser.InvokeAsync(args);
+return rootCommand.Parse(args).Invoke();
