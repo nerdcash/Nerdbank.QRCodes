@@ -10,4 +10,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Nerdbank.QRCodes\Nerdbank.QRCodes.csproj" />
   </ItemGroup>
+
+  <Import Project="$(RepoRootPath)src\Nerdbank.QRCodes\NativeBindings.targets" />
 </Project>
