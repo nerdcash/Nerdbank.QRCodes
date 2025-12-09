@@ -121,7 +121,7 @@ jobs:
       shell: pwsh
       if: always()
     - name: 📢 Upload rust
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: rust-android
         path: ${{ runner.temp }}/_artifacts/rust
@@ -197,7 +197,7 @@ jobs:
       if: always()
 
     - name: 📢 Upload deployables
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
         name: deployables
         path: ${{ runner.temp }}/_artifacts/deployables
