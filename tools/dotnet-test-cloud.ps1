@@ -55,27 +55,38 @@ $testLogs = Join-Path $ArtifactStagingFolder test_logs
 
 $globalJson = Get-Content $PSScriptRoot/../global.json | ConvertFrom-Json
 $isMTP = $globalJson.test.runner -eq 'Microsoft.Testing.Platform'
+$extraArgs = @()
+$failedTests = 0
+
 if ($isMTP) {
-    $extraArgs = @()
     if ($OnCI) { $extraArgs += '--no-progress' }
+
+    $dumpSwitches = @(
+        ,'--hangdump'
+        ,'--hangdump-timeout','120s'
+        ,'--crashdump'
+    )
+    $mtpArgs = @(
+        ,'--coverage'
+        ,'--coverage-output-format','cobertura'
+        ,'--diagnostic'
+        ,'--diagnostic-output-directory',$testLogs
+        ,'--diagnostic-verbosity','Information'
+        ,'--results-directory',$testLogs
+        ,'--report-trx'
+    )
+
     & $dotnet test --solution $RepoRoot `
         --no-build `
         -c $Configuration `
         -p:Platform=$platform `
         -bl:"$testBinLog" `
         --filter-not-trait 'TestCategory=FailsInCloudTest' `
-        --coverage `
-        --coverage-output-format cobertura `
         --coverage-settings "$PSScriptRoot/test.runsettings" `
-        --hangdump `
-        --hangdump-timeout 60s `
-        --crashdump `
-        --diagnostic `
-        --diagnostic-output-directory $testLogs `
-        --diagnostic-verbosity Information `
-        --results-directory $testLogs `
-        --report-trx `
+        @mtpArgs `
+        @dumpSwitches `
         @extraArgs
+    if ($LASTEXITCODE -ne 0) { $failedTests += 1 }
 
     $trxFiles = Get-ChildItem -Recurse -Path $testLogs\*.trx
 } else {
@@ -91,7 +102,9 @@ if ($isMTP) {
         --blame-crash `
         -bl:"$testBinLog" `
         --diag "$testDiagLog;TraceLevel=info" `
-        --logger trx
+        --logger trx `
+        @extraArgs
+    if ($LASTEXITCODE -ne 0) { $failedTests += 1 }
 
     $trxFiles = Get-ChildItem -Recurse -Path $RepoRoot\test\*.trx
 }
@@ -123,4 +136,8 @@ $trxFiles |% {
 
     Write-Host "##vso[results.publish type=VSTest;runTitle=$runTitle;publishRunAttachments=true;resultFiles=$_;failTaskOnFailedTests=true;testRunSystem=VSTS - PTR;]"
   }
+}
+
+if ($failedTests -ne 0) {
+    exit $failedTests
 }
