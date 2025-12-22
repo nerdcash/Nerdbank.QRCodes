@@ -12,6 +12,10 @@
 			"groupName": "xunit"
 		},
 		{
+			"matchPackageNames": ["taiki-e/install-action"],
+			"schedule": ["on the first day of the month"]
+		},
+		{
 			"matchPackageNames": ["Microsoft.Testing.Extensions.*"],
 			"groupName": "Microsoft Testing Platform"
 		},
