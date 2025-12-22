@@ -102,7 +102,7 @@ jobs:
 
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
     - uses: taiki-e/install-action@60581cd7025e0e855cebd745379013e286d9c787 # v2
@@ -134,7 +134,7 @@ jobs:
     - android
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
 
