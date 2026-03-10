@@ -28,7 +28,7 @@ jobs:
         - windows-2025
 
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
     - name: ⚙ Install prerequisites
@@ -50,7 +50,7 @@ jobs:
       env:
         IPHONEOS_DEPLOYMENT_TARGET: 17.0
 
-    - uses: taiki-e/install-action@b9c5db3aef04caffaf95a1d03931de10fb2a140f # v2
+    - uses: taiki-e/install-action@a37010ded18ff788be4440302bd6830b1ae50d8b # v2
       with:
         tool: cross
       if: startsWith(matrix.os, 'ubuntu')
@@ -102,10 +102,10 @@ jobs:
 
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
-    - uses: taiki-e/install-action@b9c5db3aef04caffaf95a1d03931de10fb2a140f # v2
+    - uses: taiki-e/install-action@a37010ded18ff788be4440302bd6830b1ae50d8b # v2
       with:
         tool: cargo-ndk@3
       name: ⚙️ Install cargo-ndk
@@ -135,7 +135,7 @@ jobs:
     - android
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
 
@@ -150,7 +150,7 @@ jobs:
         }
       shell: pwsh
 
-    - uses: taiki-e/install-action@b9c5db3aef04caffaf95a1d03931de10fb2a140f # v2
+    - uses: taiki-e/install-action@a37010ded18ff788be4440302bd6830b1ae50d8b # v2
       with:
         tool: cargo-bundle-licenses
       name: ⚙️ Install cargo-bundle-licenses
@@ -208,7 +208,7 @@ jobs:
     name: 📃 Docs
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
     - name: 🔗 Markup Link Checker (mlc)
       uses: becheran/mlc@7ec24825cefe0c9c8c6bac48430e1f69e3ec356e # v1.2.0
       with:
