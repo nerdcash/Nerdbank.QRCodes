@@ -125,6 +125,7 @@ jobs:
       with:
         name: rust-android
         path: ${{ runner.temp }}/_artifacts/rust
+        retention-days: 1
 
   pack:
     name: 📦 Pack
@@ -201,7 +202,7 @@ jobs:
       with:
         name: deployables
         path: ${{ runner.temp }}/_artifacts/deployables
-      if: always()
+      if: always() && github.event_name != 'pull_request'
 
   docs:
     name: 📃 Docs

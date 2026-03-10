@@ -18,19 +18,22 @@ runs:
       with:
         name: projectAssetsJson-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/projectAssetsJson
+        retention-days: 1
       continue-on-error: true
     - name: 📢 Upload variables
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: variables-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/Variables
+        retention-days: 1
       continue-on-error: true
     - name: 📢 Upload build_logs
-      if: always()
+      if: always() && (github.event_name != 'pull_request' || failure())
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: build_logs-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/build_logs
+        retention-days: 1
       continue-on-error: true
     - name: 📢 Upload testResults
       if: always()
@@ -38,6 +41,7 @@ runs:
       with:
         name: testResults-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/testResults
+        retention-days: 1
       continue-on-error: true
     - name: 📢 Upload coverageResults
       if: always()
@@ -45,22 +49,26 @@ runs:
       with:
         name: coverageResults-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/coverageResults
+        retention-days: 1
       continue-on-error: true
     - name: 📢 Upload symbols
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: symbols-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/symbols
+        retention-days: 1
       continue-on-error: true
     - name: 📢 Upload rust
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: rust-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/rust
+        retention-days: 1
       if: always()
     - name: 📢 Upload ios_framework
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: ios_framework
         path: ${{ runner.temp }}/_artifacts/ios_framework
+        retention-days: 1
       if: startsWith(matrix.os, 'macos')
