@@ -14,14 +14,14 @@ runs:
 
     - name: 📢 Upload project.assets.json files
       if: always()
-      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: projectAssetsJson-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/projectAssetsJson
         retention-days: 1
       continue-on-error: true
     - name: 📢 Upload variables
-      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: variables-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/Variables
@@ -29,7 +29,7 @@ runs:
       continue-on-error: true
     - name: 📢 Upload build_logs
       if: always() && (github.event_name != 'pull_request' || failure())
-      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: build_logs-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/build_logs
@@ -37,7 +37,7 @@ runs:
       continue-on-error: true
     - name: 📢 Upload testResults
       if: always()
-      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: testResults-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/testResults
@@ -45,28 +45,28 @@ runs:
       continue-on-error: true
     - name: 📢 Upload coverageResults
       if: always()
-      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: coverageResults-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/coverageResults
         retention-days: 1
       continue-on-error: true
     - name: 📢 Upload symbols
-      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: symbols-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/symbols
         retention-days: 1
       continue-on-error: true
     - name: 📢 Upload rust
-      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: rust-${{ runner.os }}
         path: ${{ runner.temp }}/_artifacts/rust
         retention-days: 1
       if: always()
     - name: 📢 Upload ios_framework
-      uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: ios_framework
         path: ${{ runner.temp }}/_artifacts/ios_framework
